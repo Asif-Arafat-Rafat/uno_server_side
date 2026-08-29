@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{lobby_code}}</title>
+</head>
+<body>
+    <h1>Welcome to Lobby {{player_id}}</h1>
+    <p>{{players}}</p>
+    <div class="game_data">
+        <p>Current Card: <span id="current_card"></span></p>
+        <p>Direction: <span id="direction"></span></p>
+        <p>Turn: <span id="turn"></span></p>
+        <div class="cards"></div>
+    </div>
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+    <script>
+        console.log()
+        console.log("joining lobby");
+        const socket = io();
+        const lobby_code = window.location.pathname.split("/")[2];
+        const player_id = window.location.pathname.split("/")[3];
+        console.log(player_id)
+        console.log(lobby_code);
+        socket.on("connect", () => {
+            console.log("Socket connected:", socket.id);
+
+            socket.emit("game_start", {
+                lobby_code: lobby_code,
+                player_id: player_id
+            });
+        });
+
+        socket.on("game_data", function(data) {
+            console.log("Game data received:");
+            console.log(data);
+            const currentCardSpan = document.getElementById("current_card");
+            const directionSpan = document.getElementById("direction");
+            const turnSpan = document.getElementById("turn");
+            if (data.current_card.type=='number'){
+                currentCardSpan.innerText = data.current_card.type + " " + data.current_card.value + " of " + data.current_card.color;
+            }
+            else{
+                currentCardSpan.innerText = data.current_card.type + " of " + data.current_card.color;
+            }
+            directionSpan.innerText = data.direction;
+            turnSpan.innerText = data.turn;
+            for(const card in data.data){
+                const cardDiv = document.createElement("div");
+                const p = document.createElement("p");
+                if(data.data[card].type=='number'){
+                    p.innerText = data.data[card].type + " " + data.data[card].value + " of " + data.data[card].color;
+                }
+                else{
+                    p.innerText = data.data[card].type + " of " + data.data[card].color;
+                }
+                const button = document.createElement("button");
+                button.innerHTML = "Play Card";
+                cardDiv.appendChild(p);
+                cardDiv.appendChild(button);
+                document.querySelector(".cards").appendChild(cardDiv);
+            }
+        });
+        
+        socket.on("connect_error", function(error) {
+            console.error("Socket connection error:", error);
+        });
+    </script>
+</body>
+</html>
