@@ -62,7 +62,7 @@ def monitor_lobby(data):
                 "player_count": lobbies[lobby_code]["player_count"],
                 "on_socket_count": len(player_data),
                 "players": player_data,
-                "lobby_data": lobbies[lobby_code]
+                "lobby_data": lobbies[lobby_code],
                 "lobbies": lobbies
             },to=lobby_code
 )
