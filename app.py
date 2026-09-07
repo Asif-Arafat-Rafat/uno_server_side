@@ -81,6 +81,10 @@ def handle_disconnect():
                 lobbies[lobby_code]["player_count"] -= 1
                 lobbies[lobby_code]["players"].remove(player_id)
                 del player_data[player_id]
+                if lobbies[lobby_code]["player_count"] == 0:
+                    del lobbies[lobby_code]
+                    print("Lobby deleted:", lobby_code)
+
                 emit("lobby_update", {
                     "player_count": lobbies[lobby_code]["player_count"],
                     "on_socket_count": len(player_data),
