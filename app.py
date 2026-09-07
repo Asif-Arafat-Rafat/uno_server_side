@@ -68,7 +68,9 @@ def monitor_lobby(data):
 )
     else:
         emit("error", {"message": "Lobby not found."})    
-
+@app.route("/get_lobbies")
+def get_lobbies():
+    return jsonify(lobbies)
 @socketio.on("disconnect")
 def handle_disconnect():
     socket_id = request.sid
