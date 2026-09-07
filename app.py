@@ -29,8 +29,7 @@ def add_player(lobby_code):
     lobbies[lobby_code]["players"].append(player_id)
     lobbies[lobby_code]["player_count"] += 1
 
-    return jsonify({"lobby_code": lobby_code, "player_id": player_id,
-                    "link":f"127.0.0.1:5000/monitor_lobby/{lobby_code}/{player_id}"})
+    return jsonify({"lobby_code": lobby_code, "player_id": player_id})
 
 @app.route("/monitor_lobby/<lobby_code>/<player_id>")
 def monitor_lobby_route(lobby_code, player_id):
@@ -62,7 +61,8 @@ def monitor_lobby(data):
             emit("lobby_update", {
                 "player_count": lobbies[lobby_code]["player_count"],
                 "on_socket_count": len(player_data),
-                "players": player_data
+                "players": player_data,
+                "lobby_data": lobbies[lobby_code]
             },to=lobby_code
 )
     else:
